@@ -1,5 +1,6 @@
 /**
  * micro - a grab bag of somewhat useful utility functions and other stuff that requires unit testing
+ * 本包为其他包提供一些便利函数
  *
  * Copyright (c) 2014 Cameron Beccario
  * The MIT License - http://opensource.org/licenses/MIT
@@ -16,6 +17,7 @@ var µ = function() {
 
     /**
      * @returns {Boolean} true if the specified value is truthy.
+     * 返回一个布尔变量（非空其他变量或布尔变量真时返回真，否则返回假）
      */
     function isTruthy(x) {
         return !!x;
@@ -23,6 +25,7 @@ var µ = function() {
 
     /**
      * @returns {Boolean} true if the specified value is not null and not undefined.
+     * 判断输入是否为空或未定义值
      */
     function isValue(x) {
         return x !== null && x !== undefined;
@@ -30,6 +33,7 @@ var µ = function() {
 
     /**
      * @returns {Object} the first argument if not null and not undefined, otherwise the second argument.
+     * 若a有定义且非空则返回a，否则返回b
      */
     function coalesce(a, b) {
         return isValue(a) ? a : b;
@@ -38,6 +42,7 @@ var µ = function() {
     /**
      * @returns {Number} returns remainder of floored division, i.e., floor(a / n). Useful for consistent modulo
      *          of negative numbers. See http://en.wikipedia.org/wiki/Modulo_operation.
+     * 返回a除以n的余数（存在返回余数为n的bug
      */
     function floorMod(a, n) {
         var f = a - n * Math.floor(a / n);
@@ -48,6 +53,7 @@ var µ = function() {
 
     /**
      * @returns {Number} distance between two points having the form [x, y].
+     * 返回a，b两点间距离
      */
     function distance(a, b) {
         var Δx = b[0] - a[0];
@@ -57,6 +63,7 @@ var µ = function() {
 
     /**
      * @returns {Number} the value x clamped to the range [low, high].
+     * 若x位于low与high之间返回x，否则，返回与x最接近的low或high
      */
     function clamp(x, low, high) {
         return Math.max(low, Math.min(x, high));
@@ -66,6 +73,7 @@ var µ = function() {
      * @returns {number} the fraction of the bounds [low, high] covered by the value x, after clamping x to the
      *          bounds. For example, given bounds=[10, 20], this method returns 1 for x>=20, 0.5 for x=15 and 0
      *          for x<=10.
+     * 将上一函数返回值除以high-low，以得到一个0-1之间的数
      */
     function proportion(x, low, high) {
         return (µ.clamp(x, low, high) - low) / (high - low);
@@ -73,6 +81,7 @@ var µ = function() {
 
     /**
      * @returns {number} the value p within the range [0, 1], scaled to the range [low, high].
+     * 上一函数的拟函数
      */
     function spread(p, low, high) {
         return p * (high - low) + low;
@@ -80,6 +89,8 @@ var µ = function() {
 
     /**
      * Pad number with leading zeros. Does not support fractional or negative numbers.
+     * 将一变量转化为字符串并在前方补充足够多的0使长度为width并返回（不支持分数和负数，用来使时间表示为09：00而非9：00
+     * 或者0721而非721
      */
     function zeroPad(n, width) {
         var s = n.toString();
@@ -89,6 +100,7 @@ var µ = function() {
 
     /**
      * @returns {String} the specified string with the first letter capitalized.
+     * 将字符串首字母大写
      */
     function capitalize(s) {
         return s.length === 0 ? s : s.charAt(0).toUpperCase() + s.substr(1);
@@ -96,6 +108,7 @@ var µ = function() {
 
     /**
      * @returns {Boolean} true if agent is probably firefox. Don't really care if this is accurate.
+     *返回浏览器是否为火狐浏览器
      */
     function isFF() {
         return (/firefox/i).test(navigator.userAgent);
@@ -103,15 +116,25 @@ var µ = function() {
 
     /**
      * @returns {Boolean} true if agent is probably a mobile device. Don't really care if this is accurate.
+     * 返回是否为手机浏览
      */
     function isMobile() {
         return (/android|blackberry|iemobile|ipad|iphone|ipod|opera mini|webos/i).test(navigator.userAgent);
     }
 
+    /**
+     * 返回是否为顶层窗口
+     * @returns {boolean}
+     */
     function isEmbeddedInIFrame() {
         return window != window.top;
     }
 
+    /**
+     * 返回UTC年月日时间
+     * @param date
+     * @returns {string}
+     */
     function toUTCISO(date) {
         return date.getUTCFullYear() + "-" +
             zeroPad(date.getUTCMonth() + 1, 2) + "-" +
@@ -119,6 +142,11 @@ var µ = function() {
             zeroPad(date.getUTCHours(), 2) + ":00";
     }
 
+    /**
+     * 返回UTC年月日时间
+     * @param date
+     * @returns {string}
+     */
     function toLocalISO(date) {
         return date.getFullYear() + "-" +
             zeroPad(date.getMonth() + 1, 2) + "-" +
@@ -129,6 +157,7 @@ var µ = function() {
     /**
      * @returns {String} the string yyyyfmmfdd as yyyytmmtdd, where f and t are the "from" and "to" delimiters. Either
      *          delimiter may be the empty string.
+     * 替换分隔符（例：2017/3/6 到2017-3-6
      */
     function ymdRedelimit(ymd, fromDelimiter, toDelimiter) {
         if (!fromDelimiter) {
@@ -141,17 +170,25 @@ var µ = function() {
     /**
      * @returns {String} the UTC year, month, and day of the specified date in yyyyfmmfdd format, where f is the
      *          delimiter (and may be the empty string).
+     * 将时间对象转换为字符串并将其改为yyyyfmmfdd格式返回（f为分隔符
      */
     function dateToUTCymd(date, delimiter) {
         return ymdRedelimit(date.toISOString(), "-", delimiter || "");
     }
 
+    /**
+     * 返回一对象包含date，hour属性
+     * @param date
+     * @returns {{date: String, hour: string}}
+     */
+    function dateToConfig(date) {
     function dateToConfig(date) {
         return {date: µ.dateToUTCymd(date, "/"), hour: µ.zeroPad(date.getUTCHours(), 2) + "00"};
     }
 
     /**
      * @returns {Object} an object to perform logging, if/when the browser supports it.
+     * 返回各种记录（供调试时使用？
      */
     function log() {
         function format(o) { return o && o.stack ? o + "\n" + o.stack : o; }
@@ -166,6 +203,7 @@ var µ = function() {
 
     /**
      * @returns {width: (Number), height: (Number)} an object that describes the size of the browser's current view.
+     * 判断窗体大小并返回一对象包含width，height属性
      */
     function view() {
         var w = window;
@@ -178,6 +216,7 @@ var µ = function() {
 
     /**
      * Removes all children of the specified DOM element.
+     * 清除DOM元素所有子节点
      */
     function removeChildren(element) {
         while (element.firstChild) {
@@ -187,12 +226,19 @@ var µ = function() {
 
     /**
      * @returns {Object} clears and returns the specified Canvas element's 2d context.
+     * 清楚canvas对象上内容并返回该canvas对象
      */
     function clearCanvas(canvas) {
         canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
         return canvas;
     }
 
+    /**
+     *返回一个函数基于i，a返回颜色
+     * @param start
+     * @param end
+     * @returns {Function}
+     */
     function colorInterpolator(start, end) {
         var r = start[0], g = start[1], b = start[2];
         var Δr = end[0] - r, Δg = end[1] - g, Δb = end[2] - b;
@@ -204,7 +250,7 @@ var µ = function() {
     /**
      * Produces a color style in a rainbow-like trefoil color space. Not quite HSV, but produces a nice
      * spectrum. See http://krazydad.com/tutorials/makecolors.php.
-     *
+     *返回一个数组（颜色）
      * @param hue the hue rotation in the range [0, 1]
      * @param a the alpha value in the range [0, 255]
      * @returns {Array} [r, g, b, a]
@@ -228,7 +274,7 @@ var µ = function() {
 
     /**
      * Interpolates a sinebow color where 0 <= i <= j, then fades to white where j < i <= 1.
-     *
+     *返回一个颜色
      * @param i number in the range [0, 1]
      * @param a alpha value in range [0, 255]
      * @returns {Array} [r, g, b, a]
@@ -239,12 +285,21 @@ var µ = function() {
             fadeToWhite((i - BOUNDARY) / (1 - BOUNDARY), a);
     }
 
+    /**
+     * 返回一字符串表达颜色
+     * @param r
+     * @param g
+     * @param b
+     * @param a
+     * @returns {string}
+     */
     function asColorStyle(r, g, b, a) {
         return "rgba(" + r + ", " + g + ", " + b + ", " + a + ")";
     }
 
     /**
      * @returns {Array} of wind colors and a method, indexFor, that maps wind magnitude to an index on the color scale.
+     * 返回线条（表示风流动）颜色
      */
     function windIntensityColorScale(step, maxWind) {
         var result = [];
@@ -267,6 +322,7 @@ var µ = function() {
      *       [ 1.0, [0, 255, 0] ],
      *       [ 3.5, [0, 0, 255] ] ]
      *
+     *返回一个函数（返回某点颜色取值）
      * @param segments array of color segments
      * @returns {Function} a function(point, alpha) that returns the color [r, g, b, alpha] for the given point.
      */
@@ -292,6 +348,7 @@ var µ = function() {
 
     /**
      * Returns a human readable string for the provided coordinates.
+     * 返回经纬度
      */
     function formatCoordinates(λ, φ) {
         return Math.abs(φ).toFixed(2) + "° " + (φ >= 0 ? "N" : "S") + ", " +
@@ -300,6 +357,7 @@ var µ = function() {
 
     /**
      * Returns a human readable string for the provided scalar in the given units.
+     * 返回风速
      */
     function formatScalar(value, units) {
         return units.conversion(value).toFixed(units.precision);
@@ -308,6 +366,7 @@ var µ = function() {
     /**
      * Returns a human readable string for the provided rectangular wind vector in the given units.
      * See http://mst.nerc.ac.uk/wind_vect_convs.html.
+     *返回风向（以南为0°顺时针计算角度
      */
     function formatVector(wind, units) {
         var d = Math.atan2(-wind[0], -wind[1]) / τ * 360;  // calculate into-the-wind cardinal degrees
@@ -318,6 +377,7 @@ var µ = function() {
     /**
      * Returns a promise for a JSON resource (URL) fetched via XHR. If the load fails, the promise rejects with an
      * object describing the reason: {status: http-status-code, message: http-status-text, resource:}.
+     * 载入json
      */
     function loadJson(resource) {
         var d = when.defer();
@@ -351,7 +411,7 @@ var µ = function() {
      *     Map Projections: A Working Manual, Snyder, John P: pubs.er.usgs.gov/publication/pp1395
      *     gis.stackexchange.com/questions/5068/how-to-create-an-accurate-tissot-indicatrix
      *     www.jasondavies.com/maps/tissot
-     *
+     * 根据选择投射返回方向坐标？（待修改）
      * @returns {Array} array of scaled derivatives [dx/dλ, dy/dλ, dx/dφ, dy/dφ]
      */
     function distortion(projection, λ, φ, x, y) {
@@ -425,6 +485,7 @@ var µ = function() {
 
         /**
          * Invokes the specified task.
+         *
          * @param cancel the task's cancel function.
          * @param taskAndArguments the [task-function-or-value, arg0, arg1, ...] array.
          */

@@ -1,6 +1,6 @@
 /**
  * globes - a set of models of the earth, each having their own kind of projection and onscreen behavior.
- *
+ * 设定地球模型
  * Copyright (c) 2014 Cameron Beccario
  * The MIT License - http://opensource.org/licenses/MIT
  *
@@ -12,17 +12,25 @@ var globes = function() {
     /**
      * @returns {Array} rotation of globe to current position of the user. Aside from asking for geolocation,
      *          which user may reject, there is not much available except timezone. Better than nothing.
+     * 返回当前所在经度（依靠计算当前时间与UTC时间差）
      */
     function currentPosition() {
         var λ = µ.floorMod(new Date().getTimezoneOffset() / 4, 360);  // 24 hours * 60 min / 4 === 360 degrees
         return [λ, 0];
     }
 
+    /**
+     * 判断一个元素是否为一个数，若是返回该数；否则返回fallback
+     * @param num
+     * @param fallback
+     * @returns {*}
+     */
     function ensureNumber(num, fallback) {
         return _.isFinite(num) || num === Infinity || num === -Infinity ? num : fallback;
     }
 
     /**
+     * 返回一个投射方格的边界
      * @param bounds the projection bounds: [[x0, y0], [x1, y1]]
      * @param view the view bounds {width:, height:}
      * @returns {Object} the projection bounds clamped to the specified view.
@@ -40,6 +48,7 @@ var globes = function() {
     /**
      * Returns a globe object with standard behavior. At least the newProjection method must be overridden to
      * be functional.
+     * 初始化地球（一个空地球
      */
     function standardGlobe() {
         return {
@@ -194,6 +203,12 @@ var globes = function() {
         };
     }
 
+    /**
+     * 返回一个对象包含地球的种种属性
+     * @param source
+     * @param view
+     * @returns {Object|void|*}
+     */
     function newGlobe(source, view) {
         var result = _.extend(standardGlobe(), source);
         result.projection = result.newProjection(view);
@@ -202,6 +217,9 @@ var globes = function() {
 
     // ============================================================================================
 
+    /*
+    返回一个对象的投影方式
+    */
     function atlantis() {
         return newGlobe({
             newProjection: function() {
@@ -236,7 +254,10 @@ var globes = function() {
             }
         });
     }
-
+    /*
+    以上都是不同投影方式的选择
+    以下是默认投影方式（新增了部分属性（相对于new glodbe
+     */
     function orthographic() {
         return newGlobe({
             newProjection: function() {

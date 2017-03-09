@@ -1,6 +1,6 @@
 /**
  * earth - a project to visualize global air data.
- *
+ * 主程序
  * Copyright (c) 2014 Cameron Beccario
  * The MIT License - http://opensource.org/licenses/MIT
  *
@@ -206,6 +206,7 @@
     }
 
     /**
+     * 从json文件中获得数据包括海岸线、河湖等
      * @param resource the GeoJSON resource's URL
      * @returns {Object} a promise for GeoJSON topology features: {boundaryLo:, boundaryHi:}
      */
@@ -231,6 +232,7 @@
     }
 
     /**
+     * 获取该投射方式的属性返回promise
      * @param {String} projectionName the desired projection's name.
      * @returns {Object} a promise for a globe object.
      */
@@ -245,6 +247,10 @@
     // Some hacky stuff to ensure only one download can be in progress at a time.
     var downloadsInProgress = 0;
 
+    /**
+     *
+     * @returns {*|Promise}
+     */
     function buildGrids() {
         report.status("Downloading...");
         log.time("build grids");
@@ -265,6 +271,7 @@
 
     /**
      * Modifies the configuration to navigate to the chronologically next or previous data layer.
+     * 在没有正在进行导入数据操作时重新输入时间
      */
     function navigate(step) {
         if (downloadsInProgress > 0) {
@@ -277,12 +284,17 @@
         }
     }
 
+    /**
+     * 初始化生成地图
+     * @param mesh
+     * @param globe
+     * @returns {*}
+     */
     function buildRenderer(mesh, globe) {
         if (!mesh || !globe) return null;
 
         report.status("Rendering Globe...");
         log.time("rendering map");
-
         // UNDONE: better way to do the following?
         var dispatch = _.clone(Backbone.Events);
         if (rendererAgent._previous) {
@@ -362,6 +374,11 @@
         return "ready";
     }
 
+    /**
+     * 设置一个canvas并复制其像素数据放在对象中返回
+     * @param globe
+     * @returns {*}
+     */
     function createMask(globe) {
         if (!globe) return null;
 
@@ -395,6 +412,9 @@
         };
     }
 
+    /*
+    生成一个函数
+     */
     function createField(columns, bounds, mask) {
 
         /**
@@ -515,7 +535,7 @@
             columns[x+1] = columns[x] = column;
         }
 
-        report.status("");
+        report.status("all is well");
 
         (function batchInterpolate() {
             try {
@@ -877,13 +897,6 @@
     function init() {
         report.status("Initializing...");
 
-        d3.select("#sponsor-link")
-            .attr("target", µ.isEmbeddedInIFrame() ? "_new" : null)
-            .on("click", reportSponsorClick.bind(null, "click"))
-            .on("contextmenu", reportSponsorClick.bind(null, "right-click"))
-        d3.select("#sponsor-hide").on("click", function() {
-            d3.select("#sponsor").classed("invisible", true);
-        });
 
         d3.selectAll(".fill-screen").attr("width", view.width).attr("height", view.height);
         // Adjust size of the scale canvas to fill the width of the menu to the right of the label.
@@ -893,12 +906,7 @@
             .attr("height", label.offsetHeight / 2);
 
         d3.select("#show-menu").on("click", function() {
-            if (µ.isEmbeddedInIFrame()) {
-                window.open("http://earth.nullschool.net/" + window.location.hash, "_blank");
-            }
-            else {
-                d3.select("#menu").classed("invisible", !d3.select("#menu").classed("invisible"));
-            }
+            d3.select("#menu").classed("invisible", !d3.select("#menu").classed("invisible"));
         });
 
         if (µ.isFF()) {

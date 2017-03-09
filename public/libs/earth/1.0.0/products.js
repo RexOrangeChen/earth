@@ -1,6 +1,6 @@
 /**
  * products - defines the behavior of weather data grids, including grid construction, interpolation, and color scales.
- *
+ * 提供了d3画图所需要的一些基本对象属性
  * Copyright (c) 2014 Cameron Beccario
  * The MIT License - http://opensource.org/licenses/MIT
  *
@@ -17,6 +17,11 @@ var products = function() {
         oscar: µ.loadJson([OSCAR_PATH, "catalog.json"].join("/"))
     };
 
+    /**
+     * 创建一个对象包含一些属性（待修改）
+     * @param overrides
+     * @returns {void|Object|*}
+     */
     function buildProduct(overrides) {
         return _.extend({
             description: "",
@@ -35,6 +40,7 @@ var products = function() {
     }
 
     /**
+     * 返回所需json文件的路径
      * @param attr
      * @param {String} type
      * @param {String?} surface
@@ -47,6 +53,11 @@ var products = function() {
         return [WEATHER_PATH, dir, file].join("/");
     }
 
+    /**
+     * 返回当前时间
+     * @param attr
+     * @returns {Date}
+     */
     function gfsDate(attr) {
         if (attr.date === "current") {
             // Construct the date from the current time, rounding down to the nearest three-hour block.
@@ -96,6 +107,7 @@ var products = function() {
      *     {foo: "A", bar: "I"}
      * or when called with "ja":
      *     {foo: "あ", bar: "い"}
+     * 根据选择语言返回menu上显示的选项语言
      */
     function localize(table) {
         return function(langCode) {
@@ -106,7 +118,9 @@ var products = function() {
             return result;
         }
     }
-
+    /*
+    生成一个对象，每个元素分别代表一类对象（风、气温、等等）
+     */
     var FACTORIES = {
 
         "wind": {
@@ -562,12 +576,32 @@ var products = function() {
         }
     }
 
+    /**
+     * 返回双线性插值函数值
+     * @param x
+     * @param y
+     * @param g00
+     * @param g10
+     * @param g01
+     * @param g11
+     * @returns {number}
+     */
     function bilinearInterpolateScalar(x, y, g00, g10, g01, g11) {
         var rx = (1 - x);
         var ry = (1 - y);
         return g00 * rx * ry + g10 * x * ry + g01 * rx * y + g11 * x * y;
     }
 
+    /**
+     * 返回双线性插值函数向量
+     * @param x
+     * @param y
+     * @param g00
+     * @param g10
+     * @param g01
+     * @param g11
+     * @returns {[*,*,*]}
+     */
     function bilinearInterpolateVector(x, y, g00, g10, g01, g11) {
         var rx = (1 - x);
         var ry = (1 - y);
